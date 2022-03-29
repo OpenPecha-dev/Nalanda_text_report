@@ -1,5 +1,6 @@
 import re
 import yaml
+from fuzzy_match import algorithims
 
 from pathlib import Path
 
@@ -8,6 +9,18 @@ def from_yaml(yml_path):
 
 def to_yaml(dict_):
     return yaml.safe_dump(dict_, sort_keys=False, allow_unicode=True,)
+
+def preprocess_title(title):
+    initials = ['དཔལ་', 'འཕགས་པ་']
+    for initial in initials:
+        title = title.replace(initial, '')
+    return title
+
+def get_similarity(title1, title2):
+    title1 = preprocess_title(title1)
+    title2 = preprocess_title(title2)
+    similarity = algorithims.cosine(title1,title2)
+    return similarity
 
 def get_sub_sections(work_text):
     sub_sections = {}
@@ -21,7 +34,7 @@ def get_sub_sections(work_text):
 
 def get_pedurma_text_info(text_title, text_id_title_mapping):
     for pedurma_title, text_id in text_id_title_mapping.items():
-        if text_title.strip() == pedurma_title:
+        if get_similarity(text_title.strip(),pedurma_title) >= 0.97:
             return text_id, pedurma_title
     return "", ""
 
@@ -53,9 +66,13 @@ def parse_works(work_text, text_id_title_mapping):
     return works
 
 if __name__ == "__main__":
-    work_text = Path('./data/nalanda_work/སློབ་དཔོན་ཀླུ་སྒྲུབ་ཀྱི་གསུང་གི་མཚན་བྱང་།.txt').read_text(encoding='utf-8')
     text_id_title_mapping = from_yaml(Path('./data/text_Id_title_mapping.yml'))
-    works = parse_works(work_text,text_id_title_mapping )
+    philo_work_paths = list(Path('./data/nalanda_work').iterdir())
+    philo_work_paths.sort()
+    for philo_work_path in philo_work_paths:
+        philo_name = philo_work_path.stem
+        philo_work_text = philo_work_path.read_text(encoding='utf-8')
+        works = parse_works(philo_work_text,text_id_title_mapping )
 
-    works_yaml = to_yaml(works)
-    Path('./data/nalanda_work_yaml/lodrup_work.yml').write_text(works_yaml, encoding='utf-8')
+        works_yaml = to_yaml(works)
+        Path(f'./data/nalanda_work_yaml/{philo_name}.yml').write_text(works_yaml, encoding='utf-8')
