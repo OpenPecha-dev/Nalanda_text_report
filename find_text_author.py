@@ -63,9 +63,10 @@ if __name__ == "__main__":
     for collated_text_path in collated_text_paths:
         collated_text = collated_text_path.read_text(encoding='utf-8')
         author = parse_author(collated_text)
-        if not author:
-            text_with_ending_issue.append(text_id)
         text_id = collated_text_path.stem[:-5]
+        if author == "":
+            text_with_ending_issue.append(text_id)
+        
         text_author_mapping[text_id] = author
     Path('./text_author_mapping.yml').write_text(to_yaml(text_author_mapping), encoding='utf-8')
     Path('./text_with_ending_issue.txt').write_text("\n".join(text_with_ending_issue), encoding='utf-8')
