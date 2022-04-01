@@ -10,14 +10,14 @@ from format_text import from_yaml
 def get_sections(section):
     sections = []
     for id, section_info in section.items():
-        cur_section = ['', section_info['Id'], section_info['title'],  '', '', '']
+        cur_section = ['', section_info['Id'], section_info['title'],  section_info['pedurma_title'],]
         sections.append(cur_section)
     return sections
 
 
 def make_report(works, philo):
     output_path =f"./data/nalanda_work_xcel/{philo}.xlsx"
-    header = [" Section", "Text Id", "Text Title", "Note proofread", "Pedurma dip", "Proofread Base"]
+    header = [" Section", "Text Id", "Text Title", "Pedurma Title",]
     with open(output_path, "w", encoding="UTF8") as f:
         writer = csv.writer(f)
         writer.writerow(header)

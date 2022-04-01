@@ -65,14 +65,33 @@ def parse_works(work_text, text_id_title_mapping):
         works[sub_section_name] = parse_text(sub_section_text, text_id_title_mapping)
     return works
 
-if __name__ == "__main__":
-    text_id_title_mapping = from_yaml(Path('./data/text_Id_title_mapping.yml'))
-    philo_work_paths = list(Path('./data/nalanda_work').iterdir())
-    philo_work_paths.sort()
-    for philo_work_path in philo_work_paths:
-        philo_name = philo_work_path.stem
-        philo_work_text = philo_work_path.read_text(encoding='utf-8')
-        works = parse_works(philo_work_text,text_id_title_mapping )
+def parse_nalanda_text_list(nalanda_work, nalanda_text_list):
+    for section, text in nalanda_work.items():
+        for tyid, text_info in text.items():
+            if text_info['Id']:
+                nalanda_text_list.append(text_info['Id'])
+    return nalanda_text_list
 
-        works_yaml = to_yaml(works)
-        Path(f'./data/nalanda_work_yaml/{philo_name}.yml').write_text(works_yaml, encoding='utf-8')
+def get_nalanda_text():
+    nalanda_text_list = []
+    nalanda_panditas = list(Path('./data/nalanda_work_yaml').iterdir())
+    for nalanda_pandita in nalanda_panditas:
+        nalanda_padita_work = from_yaml(nalanda_pandita)
+        nalanda_text_list = parse_nalanda_text_list(nalanda_padita_work, nalanda_text_list)
+    return nalanda_text_list
+
+
+if __name__ == "__main__":
+    # text_id_title_mapping = from_yaml(Path('./data/text_Id_title_mapping.yml'))
+    # philo_work_paths = list(Path('./data/nalanda_work').iterdir())
+    # philo_work_paths.sort()
+    # for philo_work_path in philo_work_paths:
+    #     philo_name = philo_work_path.stem
+    #     philo_work_text = philo_work_path.read_text(encoding='utf-8')
+    #     works = parse_works(philo_work_text,text_id_title_mapping )
+
+    #     works_yaml = to_yaml(works)
+    #     Path(f'./data/nalanda_work_yaml/{philo_name}.yml').write_text(works_yaml, encoding='utf-8')
+    nalanda_text_list = get_nalanda_text()
+    nalanda_text_list.sort()
+    Path('./data/nalanda_text_list.txt').write_text("\n".join(nalanda_text_list), encoding='utf-8')
