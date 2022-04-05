@@ -1,0 +1,31 @@
+id: P0A443473
+initial_creation_type: ocr
+source_metadata:
+  work_id: http://purl.bdrc.io/resource/WA20446
+  instance_id: http://purl.bdrc.io/resource/IE20446
+  collection_id: http://purl.bdrc.io/resource/PR0ET009
+  language_id: http://purl.bdrc.io/resource/LangBo
+  title:
+    bo:
+    - གསུང་འབུམ། དོན་གྲུབ་རྡོ་རྗེ།
+  alt_title:
+    zh-latn-pinyin-x-ndia:
+    - weida jiangzhi xuan ji
+  author: http://purl.bdrc.io/resource/P1641
+  publisher: UCB-OCR
+  access: http://purl.bdrc.io/admindata/AccessOpen
+  restrictedInChina: false
+  volumes:
+    9d7bc8067fec4e9fac450b1c0fd2e3ce:
+      title: པོད ༡་གསུང་འབུམ། དོན་གྲུབ་རྡོ་རྗེ
+      volume_number: 1
+      base_file: UT20446_4207_0000.txt
+      reference: http://purl.bdrc.io/resource/VLADAF2B25071D8D49
+      image_group: '4207'
+      quality: Low
+  reproductionOf:
+  - http://purl.bdrc.io/resource/MW20446
+  - http://purl.bdrc.io/resource/W20446
+  ocr_software: Namsel
+created_at: '2021-12-22T11:05:57.331686'
+last_modified_at: '2021-12-22T11:05:57.331694'

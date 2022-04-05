@@ -40,6 +40,7 @@ def put_sec_texts(pandita_code, sec_texts, sec_code, nalanda_karchak):
     text_title_id_mapping = from_yaml(Path('./data/nalanda_text_title_id_mapping.yml'))
     text_titles = sec_texts.splitlines()
     for text_code, text_title in enumerate(text_titles, 1):
+        text_title = preprocess_title(text_title)
         if text_title:
             cur_text = []
             text_id, std_title = get_text_id(text_title, text_title_id_mapping)
