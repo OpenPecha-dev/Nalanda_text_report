@@ -13,10 +13,11 @@ def to_yaml(dict_):
 
 def preprocess_title(title):
     title = title.strip()
-    noises = ['\(.+?\)', '༼.+?༽', '\d+', '\n']
+    noises = ['\(.+?\)', '༼.+?༽', '\d+', '\n', "ཞེས་བྱ་བ།"]
     for noise in noises:
         title = re.sub(noise, '', title)
     title = re.sub("པའམ.+", "", title)
+    title = re.sub("བའམ.+", "", title)
     return title
 
 def get_similarity(title1, title2):
@@ -27,14 +28,19 @@ def get_text_id(text_title, text_title_id_mapping):
     text_id = ""
     std_title = ""
     max_similarity = 0
-    text_title = preprocess_title(text_title)
     for _, text_info in text_title_id_mapping.items():
-        if get_similarity(text_title, text_info['title']) > 0.9 and get_similarity(text_title, text_info['title']) > max_similarity:
+        pedurma_title = preprocess_title(text_info['title'])
+        if get_similarity(text_title, pedurma_title) > 0.9 and get_similarity(text_title, pedurma_title) > max_similarity:
             text_id = text_info['work_id']
             std_title = text_info['title']
-            max_similarity = get_similarity(text_title, text_info['title'])
+            max_similarity = get_similarity(text_title, pedurma_title)
     return [text_id, std_title]
-        
+
+def is_double_text(text_id, nalanda_karchak):
+    for text in nalanda_karchak:
+        if text_id == text[0]:
+            return True
+    return False
 
 def put_sec_texts(pandita_code, sec_texts, sec_code, nalanda_karchak):
     text_title_id_mapping = from_yaml(Path('./data/nalanda_text_title_id_mapping.yml'))
@@ -43,12 +49,14 @@ def put_sec_texts(pandita_code, sec_texts, sec_code, nalanda_karchak):
         text_title = preprocess_title(text_title)
         if text_title:
             cur_text = []
-            text_id, std_title = get_text_id(text_title, text_title_id_mapping)
+            text_id, std_title= get_text_id(text_title, text_title_id_mapping)
             text_code = f"{int(pandita_code):02}-{int(sec_code):02}-{int(text_code):02}-"
             cur_text.append(text_id)
             cur_text.append(text_code)
             cur_text.append(text_title)
             cur_text.append(std_title)
+            if text_id and is_double_text(text_id, nalanda_karchak):
+                cur_text.append('check')
             nalanda_karchak.append(cur_text)
     return nalanda_karchak
 
@@ -80,8 +88,8 @@ def get_nalanda_karchak():
 
 
 if __name__ == "__main__":
-    output_path =f"./data/nalanda_karchak.xlsx"
-    header = ["Text Id", "Text Code", "Text Title(TY)", "Text Title(ESU)",]
+    output_path =f"./data/nalanda_karchak.csv"
+    header = ["Text Id", "Text Code", "Text Title(TY)", "Text Title(ESU)", "Need To check"]
     with open(output_path, "w", encoding="UTF8") as f:
         writer = csv.writer(f)
         writer.writerow(header)
